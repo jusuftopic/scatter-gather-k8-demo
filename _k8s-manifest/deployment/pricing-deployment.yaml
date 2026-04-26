@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pricing-deployment
+  labels:
+    app: pricing-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pricing-service
+  template:
+    metadata:
+      labels:
+        app: pricing-service
+    spec:
+      containers:
+        - name: pricing-service
+          image: pricing-service:latest
+          ports:
+            - containerPort: 8082

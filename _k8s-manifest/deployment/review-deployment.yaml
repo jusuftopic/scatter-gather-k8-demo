@@ -5,7 +5,7 @@ metadata:
   labels:
     app: review-service
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: review-service
@@ -17,5 +17,23 @@ spec:
       containers:
         - name: review-service
           image: review-service:latest
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8084
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          startupProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8084
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8084
+            initialDelaySeconds: 10
+            periodSeconds: 5
           ports:
             - containerPort: 8084

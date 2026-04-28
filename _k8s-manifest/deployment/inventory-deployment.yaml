@@ -5,7 +5,7 @@ metadata:
   labels:
     app: inventory-service
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: inventory-service
@@ -17,5 +17,23 @@ spec:
       containers:
         - name: inventory-service
           image: inventory-service:latest
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8083
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          startupProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8083
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8083
+            initialDelaySeconds: 10
+            periodSeconds: 5
           ports:
             - containerPort: 8083

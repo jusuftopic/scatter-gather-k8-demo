@@ -5,7 +5,7 @@ metadata:
   labels:
     app: aggregator-service
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: aggregator-service
@@ -17,5 +17,23 @@ spec:
       containers:
         - name: aggregator-service
           image: aggregator-service:latest
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          startupProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
           ports:
             - containerPort: 8080

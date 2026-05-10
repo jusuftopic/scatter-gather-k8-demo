@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,25 +43,35 @@ public class AggregatorController {
         Mono<Map> productMono = webClient.get()
                 .uri("http://product-service/product/" + id)
                 .retrieve()
-                .bodyToMono(Map.class);
+                .bodyToMono(Map.class)
+                .timeout(Duration.ofSeconds(2))
+                .onErrorResume(ex -> Mono.just(Map.of("error", "service unavailable")));
 
         /* pricing details */
         Mono<Map> pricingMono = webClient.get()
                 .uri("http://pricing-service/pricing/" + id)
                 .retrieve()
-                .bodyToMono(Map.class);
+                .bodyToMono(Map.class)
+                .timeout(Duration.ofSeconds(2))
+                .onErrorResume(ex -> Mono.just(Map.of("error", "service unavailable")));
 
         /* inventory details */
         Mono<Map> inventoryMono = webClient.get()
                 .uri("http://inventory-service/inventory/" + id)
                 .retrieve()
-                .bodyToMono(Map.class);
+                .bodyToMono(Map.class)
+                .timeout(Duration.ofSeconds(2))
+                .onErrorResume(ex -> Mono.just(Map.of("error", "service unavailable")));
+
 
         /* review details */
         Mono<Map> reviewMono = webClient.get()
                 .uri("http://review-service/reviews/" + id)
                 .retrieve()
-                .bodyToMono(Map.class);
+                .bodyToMono(Map.class)
+                .timeout(Duration.ofSeconds(2))
+                .onErrorResume(ex -> Mono.just(Map.of("error", "service unavailable")));
+
 
         return Mono.zip(productMono, pricingMono, inventoryMono, reviewMono)
                 .map(tuple -> {

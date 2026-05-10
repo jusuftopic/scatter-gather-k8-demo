@@ -37,3 +37,10 @@ spec:
             periodSeconds: 5
           ports:
             - containerPort: 8081
+      resources:
+        requests:
+          cpu: "100m"
+          memory: "256Mi"
+        limits:
+          cpu: "500m"
+          memory: "512Mi"
